@@ -7,15 +7,29 @@ import pandas as pd
 import joblib
 import io
 import base64
+import os
+import zipfile
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Replace with a secure key
 
-# Load dataset and model
+# 🔓 Unzip the model if not already unzipped
+ZIP_FILE = 'house_price_model.zip'
+PKL_FILE = 'house_price_model.pkl'
+
+if not os.path.exists(PKL_FILE):
+    print("Unzipping model...")
+    with zipfile.ZipFile(ZIP_FILE, 'r') as zip_ref:
+        zip_ref.extractall()
+    print("Model extracted.")
+
+# ✅ Load model after unzipping
+model = joblib.load(PKL_FILE)
+
+# Load dataset
 df = pd.read_csv('Chennai houseing sale.csv')
-model = joblib.load('house_price_model.pkl')
 
 # Dropdown options from dataset
 area_options = sorted(df['AREA'].dropna().unique())
@@ -67,7 +81,6 @@ def form():
     graph_image = None
 
     if request.method == 'POST':
-        # Extract form data
         try:
             area = request.form['area']
             street = request.form['street']
@@ -87,7 +100,6 @@ def form():
 
         build_age = pred_year - current_year
 
-        # Prepare input data
         input_data = {
             'AREA': area,
             'STREET': street,
@@ -111,12 +123,10 @@ def form():
         }
 
         input_df = pd.DataFrame([input_data])
-
-        # Predict price
         prediction = model.predict(input_df)[0]
         predicted_price = round(prediction)
 
-        # Generate trend for next 10 years
+        # Trend for 10 years
         years = np.arange(current_year, current_year + 11)
         prices = [round(model.predict(pd.DataFrame([{
             **input_data,
@@ -156,5 +166,6 @@ def logout():
     session.clear()
     flash('You have been logged out successfully', 'info')
     return redirect(url_for('login'))
+
 if __name__ == '__main__':
     app.run(debug=True)
