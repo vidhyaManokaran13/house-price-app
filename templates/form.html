@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>House Price Prediction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 700px;
+      margin-top: 50px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 25px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    .output-section {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .predicted-price {
+      font-size: 22px;
+      font-weight: bold;
+      color: #1a4d2e;
+      background: #e6ffe6;
+      padding: 12px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+   
+.graph-section {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.graph-section h3 {
+    color: #003366;
+    margin-bottom: 10px;
+}
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>🏠 House Price Prediction</h1>
+ <form action="/form" method="post">
+
+      <label for="area">Area:</label>
+      <select name="area" id="area" required>
+        {% for a in areas %}
+        <option value="{{ a }}">{{ a }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="street">Street:</label>
+      <select name="street" id="street" required>
+        {% for s in streets %}
+        <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="park_facil">Park Facilities:</label>
+      <select name="park_facil" id="park_facil" required>
+        {% for p in parks %}
+        <option value="{{ p }}">{{ p }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="dist_mainroad">Distance to Main Road:</label>
+      <select name="dist_mainroad" id="dist_mainroad" required>
+        {% for d in dist_mainroads %}
+        <option value="{{ d }}">{{ d }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="buildtype">Build Type:</label>
+      <select name="buildtype" id="buildtype" required>
+        {% for b in buildtypes %}
+        <option value="{{ b }}">{{ b }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="bedrooms">Bedrooms:</label>
+      <input type="number" name="bedrooms" id="bedrooms" min="0" required />
+
+      <label for="bathrooms">Bathrooms:</label>
+      <input type="number" name="bathrooms" id="bathrooms" min="0" required />
+
+      <label for="rooms">Number of Rooms:</label>
+      <input type="number" name="rooms" id="rooms" min="0" required />
+
+      <label for="current_year">Current Year (Build Year):</label>
+      <input type="number" name="current_year" id="current_year" min="1900" max="2100" required />
+
+      <label for="pred_year">Prediction Year:</label>
+      <input type="number" name="pred_year" id="pred_year" min="1900" max="2100" required />
+
+      <input type="submit" value="Predict Price" />
+    </form>
+
+    {% if predicted_price %}
+    <div class="output-section">
+      <div class="predicted-price">
+        💰 Predicted Price for {{ pred_year }}: ₹{{ predicted_price }}
+      </div>
+    </div>
+    {% endif %}
+    <!-- Add this inside the <div class="form-container">, after the predicted price -->
+{% if graph_image %}
+<div class="graph-container" style="margin-top: 30px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <h3 style="color: #003366; margin-top: 0;">Price Projection</h3>
+    <img src="data:image/png;base64,{{ graph_image }}" alt="Price Trend" style="width: 100%; max-width: 600px; display: block; margin: 0 auto;">
+</div>
+{% endif %}
+<div style="text-align: center; margin-top: 20px;">
+    <a href="{{ url_for('logout') }}" 
+       style="color: white; background-color: #dc3545; padding: 8px 15px; 
+              border-radius: 5px; text-decoration: none;">
+       Logout
+    </a>
+</div>
+  </div>
+</body>
+</html>
