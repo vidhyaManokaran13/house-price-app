@@ -168,6 +168,23 @@
     <h3 style="color: #003366; margin-top: 0;">Price Projection</h3>
     <img src="data:image/png;base64,{{ graph_image }}" alt="Price Trend" style="width: 100%; max-width: 600px; display: block; margin: 0 auto;">
 </div>
+{% if predicted_price %}
+<div class="output-section">
+  <div class="predicted-price">
+    💰 Predicted Price for {{ pred_year }}: ₹{{ predicted_price }}
+  </div>
+</div>
+
+<!-- Print Button -->
+<div style="text-align: center; margin-top: 20px;">
+    <button onclick="window.print()" 
+            style="background-color: #28a745; color: white; padding: 10px 20px; 
+                   border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+        🖨 Print Prediction
+    </button>
+</div>
+{% endif %}
+
 {% endif %}
 <div style="text-align: center; margin-top: 20px;">
     <a href="{{ url_for('logout') }}" 
